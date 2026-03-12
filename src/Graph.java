@@ -1,13 +1,31 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Deque;
 import java.util.Map;
 
 public class Graph {
 
-	//ATTRIBUT ?
-	//TODO
+	  //ATTRIBUT ?
+	  //TODO
 
     public Graph(String localisations, String roads)  {
         //TODO
+        String line = "";
+        String delimiter = ",";
+        try (BufferedReader br = new BufferedReader(new FileReader(localisations))) {
+            String headerLine = br.readLine();
+            if (headerLine != null) {
+                String[] headers = headerLine.split(delimiter);
+
+            }
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public Localisation[] determinerZoneInondee(long[] idsOrigin,double epsilon) {
