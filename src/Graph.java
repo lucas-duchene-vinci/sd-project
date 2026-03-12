@@ -4,10 +4,14 @@ import java.util.Map;
 public class Graph {
 
 	//ATTRIBUT ?
+    Map<Localisation, Long> correspondanceLocalisationIndice;
+    Map<Long,Localisation> correspondanceIndiceLocalisation;
+    private Chemin[][] matrice;
 	//TODO
 
     public Graph(String localisations, String roads)  {
         //TODO
+
     }
 
     public Localisation[] determinerZoneInondee(long[] idsOrigin,double epsilon) {
