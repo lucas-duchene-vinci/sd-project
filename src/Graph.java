@@ -25,7 +25,7 @@ public class Graph {
                 // Split the line by commas
                 String[] values = line.split(",");
 
-
+                System.out.println("Constructed object with: " + Arrays.toString(values));
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
