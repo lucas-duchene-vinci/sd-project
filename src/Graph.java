@@ -26,8 +26,18 @@ public class Graph {
                 // Split the line by commas
                 String[] values = line.split(",");
 
-                Localisation newLocalistation = new Localisation(Long.parseLong(values[0]), values[1], Double.parseDouble(values[2]), Double.parseDouble(values[3]), Double.parseDouble(values[4]));
-                localisationIdMap.put(newLocalistation.getId(), newLocalistation);
+                if (values.length >= 5) {
+                    long id = Long.parseLong(values[0].trim());
+                    String nom = values[1];
+                    double latitude = Double.parseDouble(values[2].trim());
+                    double longitude = Double.parseDouble(values[3].trim());
+                    double altitude = Double.parseDouble(values[4].trim());
+
+                    Localisation newLocalistation = new Localisation(id, nom, latitude, longitude, altitude);
+
+                    localisationIdMap.put(newLocalistation.getId(), newLocalistation);
+                }
+
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
