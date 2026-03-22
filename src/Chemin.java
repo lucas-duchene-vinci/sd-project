@@ -1,22 +1,22 @@
 public class Chemin {
 
-  private String pointOrigine;
-  private String pointArrive;
+  private Localisation pointOrigine;
+  private Localisation pointArrive;
   private double distance;
   private String nom;
 
-  public Chemin(String pointOrigine, String pointArrive, double distance, String nom) {
+  public Chemin(Localisation pointOrigine, Localisation pointArrive, double distance, String nom) {
     this.pointOrigine = pointOrigine;
     this.pointArrive = pointArrive;
     this.distance = distance;
     this.nom = nom;
   }
 
-  public String getPointOrigine() {
+  public Localisation getPointOrigine() {
     return pointOrigine;
   }
 
-  public String getPointArrive() {
+  public Localisation getPointArrive() {
     return pointArrive;
   }
 
