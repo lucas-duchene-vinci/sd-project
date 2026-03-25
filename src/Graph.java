@@ -35,7 +35,6 @@ public class Graph {
                 idToLocalisation.put(id, loc);
                 adj.put(id, new ArrayList<>());
 
-                System.out.println("Constructed object with: " + Arrays.toString(v));
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -64,11 +63,6 @@ public class Graph {
 
                 Chemin che = new Chemin(source, target, dist, nom);
                 adj.get(sourceId).add(che);
-
-
-
-
-                System.out.println("Constructed object with: " + Arrays.toString(v));
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -149,7 +143,7 @@ public class Graph {
 
     public Map<Localisation, Double> determinerChronologieDeLaCrue(long[] idsOrigin, double vWaterInit, double k) {
 
-        Map<Localisation, Double> tInonde = new HashMap<>();
+        Map<Localisation, Double> tInonde = new LinkedHashMap<>();
         Map<Localisation, Double> vitesseNoeud = new HashMap<>();
         Set<Localisation> visiter = new HashSet<>();
 
@@ -195,12 +189,7 @@ public class Graph {
                 }
             }
         }
-
-        LinkedHashMap<Localisation, Double> tInondeTrier = new LinkedHashMap<>();
-        tInonde.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .forEach(e -> tInondeTrier.put(e.getKey(), e.getValue()));
-        return tInondeTrier;
+        return tInonde;
     }
 
     public Deque<Localisation> trouverCheminDEvacuationLePlusCourt(long idOrigin, long idEvacuation, double vVehicule, Map<Localisation,Double> tFlood) {
@@ -208,11 +197,14 @@ public class Graph {
         Map<Localisation, Double> tTrajet = new HashMap<>();
         Map<Localisation, Localisation> parent = new HashMap<>();
         Set<Localisation> visiter = new HashSet<>();
+        Deque<Localisation> cheminEvacuation = new ArrayDeque<>();
+
         PriorityQueue<Localisation> fileAttente = new PriorityQueue<>(
                 Comparator.comparingDouble(loc -> tTrajet.getOrDefault(loc, Double.MAX_VALUE))
         );
 
         Localisation origin = idToLocalisation.get(idOrigin);
+
         if(origin != null){
             tTrajet.put(origin, 0.0);
             parent.put(origin, null);
@@ -225,7 +217,7 @@ public class Graph {
             visiter.add(locActuel);
 
             if(locActuel.getId() == idEvacuation) {
-                Deque<Localisation> cheminEvacuation = new ArrayDeque<>();
+
                 Localisation etape = locActuel;
                 while (etape != null) {
                     cheminEvacuation.addFirst(etape);
