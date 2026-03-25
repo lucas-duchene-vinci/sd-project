@@ -150,7 +150,7 @@ public class Graph {
     public Map<Localisation, Double> determinerChronologieDeLaCrue(long[] idsOrigin, double vWaterInit, double k) {
 
         Map<Localisation, Double> tInonde = new HashMap<>();
-        Map<Localisation, Double> vitesseNoeud = new HashMap<>(); // vitesse courante à chaque nœud
+        Map<Localisation, Double> vitesseNoeud = new HashMap<>();
         Set<Localisation> visiter = new HashSet<>();
 
         PriorityQueue<Localisation> fileAttente = new PriorityQueue<>(
