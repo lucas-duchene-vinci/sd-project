@@ -1,4 +1,3 @@
-import javax.xml.stream.Location;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -205,11 +204,11 @@ public class Graph {
 
         Localisation origin = idToLocalisation.get(idOrigin);
 
-        if(origin != null){
-            tTrajet.put(origin, 0.0);
-            parent.put(origin, null);
-            fileAttente.add(origin);
-        }
+
+        tTrajet.put(origin, 0.0);
+        parent.put(origin, null);
+        fileAttente.add(origin);
+
 
         while(!fileAttente.isEmpty()) {
             Localisation locActuel = fileAttente.poll();
@@ -244,7 +243,7 @@ public class Graph {
 
             }
         }
-		    return null ;
+		    throw new RuntimeException("Pas de chemin de " + idOrigin + " à " + idEvacuation +  "évitant la zone inondée");
     }
 
 
