@@ -127,6 +127,9 @@ public class Graph {
                 }
             }
         }
+        if(!trouver) {
+            throw new RuntimeException("Pas de chemin de " + idDestination + " à "+ idDestination + " évitant la zone inondée");
+        }
         long id = idDestination;
         fin.addFirst(idToLocalisation.get(id));
         while (id != idOrigin){
@@ -243,7 +246,7 @@ public class Graph {
 
             }
         }
-		    throw new RuntimeException("Pas de chemin de " + idOrigin + " à " + idEvacuation +  "évitant la zone inondée");
+		    throw new RuntimeException("Pas de chemin de " + idOrigin + " à " + idEvacuation +  " évitant la zone inondée");
     }
 
 
