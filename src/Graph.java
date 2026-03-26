@@ -92,7 +92,7 @@ public class Graph {
         }
         Localisation[] zoneInonde = new Localisation[inonde.size()];
 
-		return  inonde.toArray(zoneInonde);
+        return  inonde.toArray(zoneInonde);
     }
 
     public Deque<Localisation> trouverCheminLePlusCourtPourContournerLaZoneInondee(long idOrigin, long idDestination, Localisation[] floodedZone) {
@@ -130,9 +130,9 @@ public class Graph {
         long id = idDestination;
         fin.addFirst(idToLocalisation.get(id));
         while (id != idOrigin){
-           Localisation localisation = idToLocalisation.get(parent.get(id));
-           fin.addFirst(localisation);
-           id = localisation.getId();
+            Localisation localisation = idToLocalisation.get(parent.get(id));
+            fin.addFirst(localisation);
+            id = localisation.getId();
         }
 
 
