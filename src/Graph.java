@@ -173,8 +173,8 @@ public class Graph {
                 if (visiter.contains(locAdj)) continue;
 
                 double distance = chemin.getDistance();
-                double slope = (locActuel.getAltitude() - locAdj.getAltitude()) / distance; // pente
-                double nVolocite = velocite + (k * slope);
+                double pente = (locActuel.getAltitude() - locAdj.getAltitude()) / distance;
+                double nVolocite = velocite + (k * pente);
 
 
                 if (nVolocite <= 0) continue;
