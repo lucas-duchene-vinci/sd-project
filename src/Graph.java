@@ -1,10 +1,7 @@
-import java.io.BufferedReader;
+import javax.xml.stream.Location;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Graph {
 
@@ -38,7 +35,6 @@ public class Graph {
                 idToLocalisation.put(id, loc);
                 adj.put(id, new ArrayList<>());
 
-                System.out.println("Constructed object with: " + Arrays.toString(v));
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -67,12 +63,6 @@ public class Graph {
 
                 Chemin che = new Chemin(source, target, dist, nom);
                 adj.get(sourceId).add(che);
-
-
-                Chemin che2 = new Chemin(target, source, dist, nom);
-                adj.get(targetId).add(che2);
-
-                System.out.println("Constructed object with: " + Arrays.toString(v));
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -103,11 +93,11 @@ public class Graph {
         }
         Localisation[] zoneInonde = new Localisation[inonde.size()];
 
-		return  inonde.toArray(zoneInonde);
+        return  inonde.toArray(zoneInonde);
     }
 
     public Deque<Localisation> trouverCheminLePlusCourtPourContournerLaZoneInondee(long idOrigin, long idDestination, Localisation[] floodedZone) {
-		//TODO
+        //TODO
         Localisation origin = idToLocalisation.get(idOrigin);
         Localisation destination = idToLocalisation.get(idDestination);
         ArrayDeque<Localisation> explorer = new ArrayDeque<>();
@@ -141,9 +131,9 @@ public class Graph {
         long id = idDestination;
         fin.addFirst(idToLocalisation.get(id));
         while (id != idOrigin){
-           Localisation localisation = idToLocalisation.get(parent.get(id));
-           fin.addFirst(localisation);
-           id = localisation.getId();
+            Localisation localisation = idToLocalisation.get(parent.get(id));
+            fin.addFirst(localisation);
+            id = localisation.getId();
         }
 
 
@@ -151,14 +141,110 @@ public class Graph {
         return fin;
     }
 
-    public Map<Localisation,Double> determinerChronologieDeLaCrue(long[] idsOrigin, double vWaterInit, double k) {
-        //TODO
-        return null ;
+    public Map<Localisation, Double> determinerChronologieDeLaCrue(long[] idsOrigin, double vWaterInit, double k) {
+
+        Map<Localisation, Double> tInonde = new LinkedHashMap<>();
+        Map<Localisation, Double> vitesseNoeud = new HashMap<>();
+        Set<Localisation> visiter = new HashSet<>();
+
+        PriorityQueue<Localisation> fileAttente = new PriorityQueue<>(
+                Comparator.comparingDouble(loc -> tInonde.getOrDefault(loc, Double.MAX_VALUE))
+        );
+
+        for (long id : idsOrigin) {
+            Localisation loc = idToLocalisation.get(id);
+            if (loc != null) {
+                tInonde.put(loc, 0.0);
+                vitesseNoeud.put(loc, vWaterInit);
+                fileAttente.add(loc);
+            }
+        }
+
+        while (!fileAttente.isEmpty()) {
+            Localisation locActuel = fileAttente.poll();
+            if (visiter.contains(locActuel)) continue;
+            visiter.add(locActuel);
+
+            double tempsActuel = tInonde.get(locActuel);
+            double velocite = vitesseNoeud.get(locActuel);
+
+            for (Chemin chemin : adj.get(locActuel.getId())) {
+                Localisation locAdj = chemin.getPointArrive();
+                if (visiter.contains(locAdj)) continue;
+
+                double distance = chemin.getDistance();
+                double pente = (locActuel.getAltitude() - locAdj.getAltitude()) / distance;
+                double nVolocite = velocite + (k * pente);
+
+
+                if (nVolocite <= 0) continue;
+
+                double tempsVoyage = distance / nVolocite;
+                double nTemps = tempsActuel + tempsVoyage;
+
+                if (!tInonde.containsKey(locAdj) || nTemps < tInonde.get(locAdj)) {
+                    tInonde.put(locAdj, nTemps);
+                    vitesseNoeud.put(locAdj, nVolocite);
+                    fileAttente.add(locAdj);
+                }
+            }
+        }
+        return tInonde;
     }
 
     public Deque<Localisation> trouverCheminDEvacuationLePlusCourt(long idOrigin, long idEvacuation, double vVehicule, Map<Localisation,Double> tFlood) {
-        //TODO
-		return null ;
+
+        Map<Localisation, Double> tTrajet = new HashMap<>();
+        Map<Localisation, Localisation> parent = new HashMap<>();
+        Set<Localisation> visiter = new HashSet<>();
+        Deque<Localisation> cheminEvacuation = new ArrayDeque<>();
+
+        PriorityQueue<Localisation> fileAttente = new PriorityQueue<>(
+                Comparator.comparingDouble(loc -> tTrajet.getOrDefault(loc, Double.MAX_VALUE))
+        );
+
+        Localisation origin = idToLocalisation.get(idOrigin);
+
+        if(origin != null){
+            tTrajet.put(origin, 0.0);
+            parent.put(origin, null);
+            fileAttente.add(origin);
+        }
+
+        while(!fileAttente.isEmpty()) {
+            Localisation locActuel = fileAttente.poll();
+            if(visiter.contains(locActuel)) continue;
+            visiter.add(locActuel);
+
+            if(locActuel.getId() == idEvacuation) {
+
+                Localisation etape = locActuel;
+                while (etape != null) {
+                    cheminEvacuation.addFirst(etape);
+                    etape = parent.get(etape);
+                }
+                return cheminEvacuation;
+            }
+
+            for (Chemin chemin : adj.get(locActuel.getId())) {
+                Localisation locAdj = chemin.getPointArrive();
+                if(visiter.contains(locAdj)) continue;
+                double distance = chemin.getDistance();
+                double tArrivee = tTrajet.get(locActuel) + (distance / vVehicule);
+
+                double tInonde = tFlood.getOrDefault(locAdj, Double.MAX_VALUE);
+
+                if(tArrivee > tInonde) continue;
+
+                if(!tTrajet.containsKey(locAdj) || tArrivee < tTrajet.get(locAdj)) {
+                    tTrajet.put(locAdj, tArrivee);
+                    parent.put(locAdj, locActuel);
+                    fileAttente.add(locAdj);
+                }
+
+            }
+        }
+        return null ;
     }
 
 
