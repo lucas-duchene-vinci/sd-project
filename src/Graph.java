@@ -1,4 +1,4 @@
-import javax.xml.stream.Location;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -35,6 +35,7 @@ public class Graph {
                 idToLocalisation.put(id, loc);
                 adj.put(id, new ArrayList<>());
 
+                System.out.println("Constructed object with: " + Arrays.toString(v));
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -244,7 +245,7 @@ public class Graph {
 
             }
         }
-        return null ;
+		    return null ;
     }
 
 
